@@ -13,6 +13,7 @@ from io import BytesIO
 import tarfile
 import tempfile
 from six.moves import urllib
+import time
 
 from matplotlib import gridspec
 from matplotlib import pyplot as plt
@@ -79,9 +80,12 @@ class Model:
 		"""
 		w,h = image.size
 		resized_image = self.resize_image(image)
+		t1 = time.time()
 		batch_seg_map = self.sess.run(
 			self.OUTPUT_TENSOR_NAME,
 			feed_dict={self.INPUT_TENSOR_NAME: [np.asarray(resized_image)]})
+		t2 = time.time()
+		print(t2 - t1)
 		seg_map = batch_seg_map[0]
 		return resized_image, seg_map
 
@@ -155,7 +159,8 @@ class Model:
 if __name__ == '__main__':
 	model_path = '/home/chinmay/Code/workspace/github/deeplab_models/deeplabv3_mnv2_dm05_pascal_trainaug/frozen_inference_graph.pb'
 	image_path = '/home/chinmay/Pictures/image1.jpg'
-	model = Model(model_path)
+	model_path2 = '/home/chinmay/Downloads/mb1/mobilenet_v1_1.0_224_quant_frozen.pb'
+	model = Model(model_path2)
 	original_im = Image.open(image_path)
 	resized_im, seg_map = model.run(original_im)
 
