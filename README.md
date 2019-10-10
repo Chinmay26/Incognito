@@ -9,7 +9,7 @@ This project removes your background by optimizing segmentation models for CPU i
 |          Optimization                      | CPU Inference time    |        FPS      |       Model Size      |       IOU      |
 | ------------------------------------------ |:---------------------:| ----------------|-----------------------|----------------|
 | ResNet Model (256*256)                     |  ~265 ms              |        3-4      |         98.2 MB       |   0.95592      |
-| Architecture Optimization                  |  ~183 ms              |        5-6      |         81.2 MB       |   0.96079      |
+| Architecture Optimization (EFF EB0)        |  ~183 ms              |        5-6      |         41.2 MB       |   0.96079      |
 | Deep Learning Optimization                 |  ~179 ms              |        5-6      |         10.6 MB       |   0.96079      |
 | Engineering Optimization (128 * 128)       |  ~156 ms              |       15-17     |         10.6 MB       |   0.94648      |
 
