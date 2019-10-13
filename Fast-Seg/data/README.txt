@@ -8,6 +8,12 @@ preprocessed
 	|__create_mashup_dataset.py  (This script creates the Potriat-Indoor dataset)
 	|__mashup_helper.py  (Helper to create image transforms)
 	|__params.json  (Config file to specify the location of Flickr/MIT datasets)
+      |
+      |_potrait_image_dir       // Path to the Flickr potrait dataset
+      |_mask_dir                // Path to Flickr potrait segmentation masks 
+      |_indoor_image_dir        // Path to MIT Indoor dataset
+      |_agumented_dir           // Path to newly created mashup Portrait-Indoor dataset
+      |_mask_crop_file_path     // Path to Flickr portrait crop file
 
 processed
     |

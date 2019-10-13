@@ -41,13 +41,22 @@ class PotraitIndoorDataset(object):
         with open(params_file) as fp:
             params_dict = json.load(fp)
 
-        self.potrait_image_dir = params_dict["potrait_image_dir"]
-        self.mask_dir = params_dict["mask_dir"]
-        self.indoor_image_dir = params_dict["indoor_image_dir"]
-        self.agumented_dir = os.path.abspath(
-            os.path.dirname(params_dict["agumented_dir"])
+        full_dir_path = self.indoor_image_dir = os.path.abspath(
+            os.path.dirname(__file__)
         )
-        with open(params_dict["mask_crop_file_path"]) as fp:
+
+        self.potrait_image_dir = os.path.join(
+            full_dir_path, params_dict["potrait_image_dir"]
+        )
+        self.mask_dir = os.path.join(full_dir_path, params_dict["mask_dir"])
+        self.indoor_image_dir = os.path.join(
+            full_dir_path, params_dict["indoor_image_dir"]
+        )
+        self.agumented_dir = os.path.join(full_dir_path, params_dict["agumented_dir"])
+
+        with open(
+            os.path.join(full_dir_path, params_dict["mask_crop_file_path"])
+        ) as fp:
             self.image_dict = json.load(fp)
 
         random.seed(42)
@@ -56,17 +65,17 @@ class PotraitIndoorDataset(object):
         self.indoor_train, self.indoor_test, self.indoor_val = [], [], []
 
     def process_potrait(self, img_path):
-    	"""Processes Flickr image potrait
+        """Processes Flickr image potrait
 
-    	   Args
-    	   ----
-    	       img_path(str): file_path of the image
+            Args
+            ----
+                img_path(str): file_path of the image
 
-    	   Returns
-    	   -------
-    	       rgb(np.array): image resized and cropped
+            Returns
+            -------
+                rgb(np.array): image resized and cropped
 
-    	"""
+        """
         bgr = cv2.imread(img_path)
         rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
 
@@ -80,11 +89,23 @@ class PotraitIndoorDataset(object):
 
     def process_potrait_mask(self, mask_path):
         """Load masks from Flickr dataset which are stored as MATLAB files
+
+            Args
+            ----
+               mask_path(str): directory of Flickr Portrait Mask dataset
+
+
+            Returns
+            -------
+               numpy.array
+
 		"""
         mat = loadmat(mask_path)
         return mat["mask"].astype(np.uint8)
 
     def setup_dataset(self):
+        """Collect image paths from the Flickr & Potrait dataset
+        """
 
         indoor_files = [
             f for f in glob.glob(self.indoor_image_dir + "**/*.jpg", recursive=True)
@@ -117,13 +138,15 @@ class PotraitIndoorDataset(object):
         self.indoor_test = indoor_files[val:]
 
     def create_dataset(self):
+        """Wrapper to create Potrait-Indoor train, test and validation datasets
+        """
         self.setup_dataset()
 
         print(
             "Creating Validation dataset by embedding Portrait images onto Indoor scene images"
         )
         self.create_val_dataset()
-        print("Finished Creating Training dataset")
+        print("Finished Creating Validation dataset")
         print("Creating Test dataset")
         self.create_test_dataset()
         print("Finished Creating Test dataset")
@@ -193,7 +216,7 @@ class PotraitIndoorDataset(object):
                     + indoor_img_name
                     + "_"
                 )
-                print(aug_img_name, mask_img_name)
+                #print(aug_img_name, mask_img_name)
 
                 try:
                     for a in args:
@@ -206,11 +229,7 @@ class PotraitIndoorDataset(object):
                             intensity=1.0,
                         )
 
-                        print(
-                            embedded_image.shape,
-                            embedded_image[0][0][0],
-                            aug_img_name + a + self.JPG_FORMAT,
-                        )
+                        
                         skimage.io.imsave(
                             aug_img_name + a + self.JPG_FORMAT, embedded_image
                         )
@@ -318,7 +337,10 @@ class PotraitIndoorDataset(object):
         args = ["none", "left_random", "right_random"]
         exceptions = []
         test_potrait_images = [
-            f for f in glob.glob(potrait_image_dir + "test/" + "*.jpg", recursive=True)
+            f
+            for f in glob.glob(
+                self.potrait_image_dir + "test/" + "*.jpg", recursive=True
+            )
         ]
         for potrait_img_path in tqdm(test_potrait_images):
             for i in range(2):
@@ -335,9 +357,9 @@ class PotraitIndoorDataset(object):
                 expected_mask_path = os.path.join(
                     self.mask_dir, expected_mask_file_name
                 )
-                potrait_mask = process_potrait_mask(expected_mask_path)
+                potrait_mask = self.process_potrait_mask(expected_mask_path)
 
-                print(expected_mask_path, potrait_img_path, indoor_img_path)
+                # print(expected_mask_path, potrait_img_path, indoor_img_path)
 
                 indoor_img_fullname = os.path.basename(indoor_img_path)
                 indoor_img_name, extension = os.path.splitext(indoor_img_fullname)
@@ -385,6 +407,6 @@ class PotraitIndoorDataset(object):
 
 
 if __name__ == "__main__":
-    params_file = "./params.json"
+    params_file = os.path.abspath(os.path.dirname(__file__) + "/./params.json")
     mashup = PotraitIndoorDataset(params_file)
     mashup.create_dataset()
