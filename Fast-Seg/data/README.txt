@@ -5,7 +5,7 @@ Directory Structure
 
 preprocessed
 	|
-	|__create_mashup_dataset.py  (This script creates the Potriat-Indoor dataset)
+	|__create_mashup_dataset.py  (This script creates the Potriat-Indoor dataset under ./data/processed/Potrait-Indoor/)
 	|__mashup_helper.py  (Helper to create image transforms)
 	|__params.json  (Config file to specify the location of Flickr/MIT datasets)
       |

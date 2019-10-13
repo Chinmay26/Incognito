@@ -175,6 +175,12 @@ class PotraitIndoorDataset(object):
         img_data_dir = "/train/"
         mask_data_dir = "/train_mask/"
 
+        if not os.path.exists(self.agumented_dir + img_data_dir):
+            os.makedirs(self.agumented_dir + img_data_dir)
+
+        if not os.path.exists(self.agumented_dir + mask_data_dir):
+            os.makedirs(self.agumented_dir + mask_data_dir)
+
         args = ["none", "left_random", "right_random"]
         exceptions = []
         for potrait_img_path in tqdm(self.train_potrait_images):
@@ -257,6 +263,12 @@ class PotraitIndoorDataset(object):
         img_data_dir = "/val/"
         mask_data_dir = "/val_mask/"
 
+        if not os.path.exists(self.agumented_dir + img_data_dir):
+            os.makedirs(self.agumented_dir + img_data_dir)
+
+        if not os.path.exists(self.agumented_dir + mask_data_dir):
+            os.makedirs(self.agumented_dir + mask_data_dir)
+
         args = ["none", "left_random", "right_random"]
         exceptions = []
         for potrait_img_path in tqdm(self.val_potrait_images):
@@ -334,6 +346,13 @@ class PotraitIndoorDataset(object):
 		"""
         img_data_dir = "/test/"
         mask_data_dir = "/test_mask/"
+        
+        if not os.path.exists(self.agumented_dir + img_data_dir):
+            os.makedirs(self.agumented_dir + img_data_dir)
+
+        if not os.path.exists(self.agumented_dir + mask_data_dir):
+            os.makedirs(self.agumented_dir + mask_data_dir)
+
         args = ["none", "left_random", "right_random"]
         exceptions = []
         test_potrait_images = [
