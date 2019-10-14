@@ -35,3 +35,6 @@ raw
 
 dataset.py (Dataset handler which generates Image-Mask batches)
 
+
+Execute script as: python -W ignore ./data/preprocessed/create_mashup_dataset.py 
+
