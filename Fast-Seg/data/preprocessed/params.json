@@ -1,0 +1,7 @@
+{
+	"potrait_image_dir": "../raw/Flickr/",
+	"mask_dir": "../raw/Flickr_mask/",
+	"indoor_image_dir": "../raw/Indoor/",
+	"agumented_dir": "../processed/Portrait-Indoor/",
+	"mask_crop_file_path": "../raw/Flickr/image_mask.json"
+}

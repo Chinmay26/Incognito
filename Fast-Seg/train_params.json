@@ -1,0 +1,13 @@
+{
+	"data_dir": "/./data/processed/Portrait-Indoor/",
+	"saved_model_dir": "/./data/saved_models/",
+	"batch_size": 16,
+	"epochs": 1,
+	"model": {
+		"encoder": "efficient_net",
+		"type": "EB0",
+		"img_size": 128,
+		"model_experiment_param": 0
+	}
+
+}
