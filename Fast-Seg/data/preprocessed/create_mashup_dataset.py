@@ -41,7 +41,7 @@ class PotraitIndoorDataset(object):
         with open(params_file) as fp:
             params_dict = json.load(fp)
 
-        full_dir_path = self.indoor_image_dir = os.path.abspath(
+        full_dir_path =  os.path.abspath(
             os.path.dirname(__file__)
         )
 

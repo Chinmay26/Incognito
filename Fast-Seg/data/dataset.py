@@ -1,3 +1,10 @@
+"""
+Dataset handler to load images and masks necessary for training
+
+This is inspired by https://github.com/qubvel/segmentation_models/blob/master/examples/binary%20segmentation%20(camvid).ipynb & modified to suit my requirements
+
+"""
+
 import os
 import numpy as np
 import keras
@@ -6,53 +13,64 @@ import cv2
 from scipy.io import loadmat
 
 
-class Dataset:
+class Dataset(object):
     """
-        Basic dataset handler
+        Dataset handler to laod images and segmentation masks
     """
-
-    CLASSES = ["person"]
-    img_resize = (224, 224)
 
     def __init__(
         self,
         images_dir,
         masks_dir,
-        crop_file,
-        classes=None,
-        augmentation=None,
-        preprocessing=None,
+        test=False,
+        total_classes=["person"],
+        img_size=(128, 128),
     ):
+        """Initialize the dataset
+
+            Args
+            ----
+                images_dir(str): path to the images dir
+                masks_dir(str): path to the masks dir
+                test(bool): Load dataset in training or test mode
+                total_classes(list): total segmentation classes
+                img_size(tuple): image resoltion
+
+            Returns
+            ------
+                None
+
+        """
+        self.img_resize = img_size
         self.ids = os.listdir(images_dir)
         self.images_fps = [os.path.join(images_dir, image_id) for image_id in self.ids]
         self.masks_fps = []
+
         for image_id in self.ids:
-            img_name = image_id.split(".")[0]
-            mask_name = img_name + "_mask.mat"
+            img_name, extension = os.path.splitext(image_id)
+            mask_name = img_name + ".png"
             self.masks_fps.append(os.path.join(masks_dir, mask_name))
 
         # convert str names to class values on masks
-        self.class_values = [self.CLASSES.index(cls.lower()) for cls in classes]
-
-        self.augmentation = augmentation
-        self.preprocessing = preprocessing
-        self.image_dict = {}
-        with open(crop_file) as cp:
-            self.image_dict = json.load(cp)
+        self.class_values = [total_classes.index(cls.lower()) for cls in total_classes]
 
     def __getitem__(self, i):
-        image = cv2.imread(self.images_fps[i])
+        """Get specific items from the dataset
+
+            Args
+            ----
+                i (int): Get ith items
+
+            Returns
+                image,mask(tuple): Get tuple of image and segmentation mask
+        """
+        image = cv2.imread(self.images_fps[i]).astype(np.float32)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-        crop_coords = self.image_dict[self.ids[i]][1]
-        assert len(crop_coords) == 4
-        y0, y1, x0, x1 = crop_coords[0], crop_coords[1], crop_coords[2], crop_coords[3]
-        image = image[y0:y1, x0:x1, :]  # crop out the image
         image = cv2.resize(image, self.img_resize)
+        image = np.divide(image, 255.0, dtype=np.float32)
 
-        mask_mat = loadmat(self.masks_fps[i])
-        mask = mask_mat["mask"].astype(np.uint8)
-        mask = cv2.resize(mask, self.img_resize)
+        mask = cv2.imread(self.masks_fps[i], cv2.IMREAD_GRAYSCALE)
+        mask = cv2.resize(mask, self.img_resize).astype(np.uint8)
         mask = np.expand_dims(mask, axis=2)
 
         return image, mask
@@ -63,10 +81,18 @@ class Dataset:
 
 class Dataloder(keras.utils.Sequence):
     """.
-        Image Mask Batch Generator
+        Data Generator to load images & masks in batches
     """
 
     def __init__(self, dataset, batch_size=1, shuffle=False):
+        """Initialize the data generator
+
+            Args
+            ----
+                dataset(Dataset): the dataset to be batch loaded
+                batch_size(int): size of the batch to be generated
+                shuffle(bool): shuffle the batch before being sent
+        """
         self.dataset = dataset
         self.batch_size = batch_size
         self.shuffle = shuffle
@@ -75,7 +101,15 @@ class Dataloder(keras.utils.Sequence):
         self.on_epoch_end()
 
     def __getitem__(self, i):
+        """Get specific items from the dataset
 
+            Args
+            ----
+                i (int): Get ith items
+
+            Returns
+                batch(list): Get list of tuple of image and segmentation masks
+        """
         # collect batch data
         start = i * self.batch_size
         stop = (i + 1) * self.batch_size
@@ -93,6 +127,6 @@ class Dataloder(keras.utils.Sequence):
         return len(self.indexes) // self.batch_size
 
     def on_epoch_end(self):
-        """Callback function to shuffle indexes each epoch"""
+        """Callback function to shuffle indexes after each epoch"""
         if self.shuffle:
             self.indexes = np.random.permutation(self.indexes)
