@@ -78,7 +78,6 @@ class Trainer(object):
         self.saved_model_graph = (
             self.full_dir_path
             + self.train_params_dict["saved_model_dir"]
-            + "_"
             + self.train_params_dict["model"]["encoder"]
             + "_"
             + self.train_params_dict["model"]["type"]
@@ -92,7 +91,6 @@ class Trainer(object):
         self.saved_model_weights = (
             self.full_dir_path
             + self.train_params_dict["saved_model_dir"]
-            + "_"
             + self.train_params_dict["model"]["encoder"]
             + "_"
             + self.train_params_dict["model"]["type"]
