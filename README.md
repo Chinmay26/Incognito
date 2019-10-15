@@ -37,8 +37,8 @@ This project removes your background by optimizing segmentation models for CPU i
 | ------------------------------------------ |:---------------------:| ----------------|-----------------------|----------------|
 | ResNet Model (256*256)                     |  ~265 ms              |        **3-4**      |         **98.2 MB**       |   0.95592      |
 | Architecture Optimization (EfficientNet EB0)      |  ~229 ms              |        5-6      |         41.2 MB       |   0.96079      |
-| Deep Learning Optimization (Quantization + Graph Optimization + EfficientNet EB0)              |  ~219 ms              |        5-6      |         10.6 MB       |   0.96079      |
-| Engineering Optimization (Quantization + Graph Optimization + EfficientNet EB0 + Image resolution reduction - 128*128)      |  ~56 ms               |       **15-17**     |         **10.6 MB**       |   0.94648      |
+| Deep Learning Optimization (Quantization + Graph Optimization + EfficientNet EB0)              |  ~219 ms              |        5-6      |         10.6 MB       |   0.92648      |
+| Engineering Optimization (Quantization + Graph Optimization + EfficientNet EB0 + Image resolution reduction - 128*128)      |  ~56 ms               |       **15-17**     |         **10.6 MB**       |   0.92648      |
 
 ### Model files
 The optimized and compressed models can be found under following directory
