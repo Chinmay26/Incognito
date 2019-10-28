@@ -82,19 +82,23 @@ if __name__=='__main__':
    split_h, split_w = int(args["webcam_height"]) - 150, int(args["webcam_width"]//2)
    h,w,c = 128, 128, 3
 
+   full_dir_path = os.path.abspath(os.path.dirname(__file__))
+
    #load the model from graph & setup the weights
    print("===============Loading Model==============")
-   base_model_path = '/home/chinmay/Code/workspace/saved_models/models/eng/EB0/128/'
-   with open(base_model_path + 'graph.json','r') as f:
+   #base_model_path = '/home/chinmay/Code/workspace/saved_models/models/eng/EB0/128/'
+   base_model_path = "/./data/assets/saved_models/"
+   base_model_full_path = full_dir_path + base_model_path
+   with open(base_model_full_path + 'Unet_EB0_128_graph.json','r') as f:
        model_json = json.load(f)
 
    model = model_from_json(model_json, custom_objects = {"swish": tf.nn.swish, "FixedDropout": FixedDropout})
-   model.load_weights(base_model_path + 'weights.h5')
+   model.load_weights(base_model_full_path + 'Unet_EB0_128_weights.h5')
    print("===============Model loaded==============")
    print("===============Warming up the graph==============")
    r = np.random.rand(1,h,w,c)
-   #for i in tqdm(range(500)):
-   #   pr_mask = model.predict(r)
+   for i in tqdm(range(500)):
+      pr_mask = model.predict(r)
    print("===============Graph warmed up===============")
 
 
@@ -125,12 +129,15 @@ if __name__=='__main__':
          #model prediction
          pr_mask = model.predict(image)
          mask = pr_mask[..., 0].squeeze()
-         mask_dst = cv2.resize(mask, (split_h, split_w))
 
          # Image postprocessing; remove background and apply background blur for better visually appealing stream
-         mask=np.expand_dims(mask_dst, axis=-1)
-         mask=np.dstack( ( mask, mask, mask) )
-         new_image = np.where(mask > 0.01, orig_normal, orig_blur)
+         mask_dst = cv2.resize(mask, (split_h, split_w))
+         mask_dst = cv2.blur(mask_dst,(19, 19),0)
+         new_image = np.multiply(orig_normal, mask_dst[:,:,None], dtype=np.float32)
+         mask=np.dstack( ( mask_dst, mask_dst, mask_dst) )
+         new_image = np.where(mask > 0.5, new_image, orig_blur)
+
+         #display the frame
          color_and_mask = np.concatenate((orig_normal, new_image), axis=1)
          total_time.append(time.time() - t1)
          
@@ -152,5 +159,5 @@ if __name__=='__main__':
 
 
    print("FPS {t}".format(t = ( frames /  sum(total_time)) ))
-   print("frames {f}".format(f=frames) )
+   print("Total Frames {f}".format(f=frames) )
 
