@@ -32,13 +32,31 @@ class Evaluation(object):
 	"""Class to evaluate model architecture parameters
 	"""
 	def __init__(self, params):
-		"""
+		"""Initialize model graph and weights
+
+			Args:
+			-----
+				params(dict)
+
+			Returns:
+			-------
+				None
 		"""
 		if params["model_type"] == 'keras_model':
 			self.graph = params["model_graph_file_path"]
 			self.weights = params["model_weights_file_path"]
 
 	def load_model(self):
+		"""Load model from graph
+
+			Args:
+			-----
+				None
+
+			Returns:
+			--------
+				None
+		"""
 		print("==================LOADING MODEL==================")
 		#load the model from graph & setup the weights
 		with open(self.graph,'r') as f:
@@ -51,6 +69,17 @@ class Evaluation(object):
 
 
 	def get_model_params(self):
+		"""Get model architecture metrics:
+			Metrics: FLOPS and model parameters
+
+			Args:
+			-----
+				None
+
+			Returns:
+			--------
+				params(dict): model parameters
+		"""
 		model = self.load_model()
 		run_meta = tf.RunMetadata()
 
