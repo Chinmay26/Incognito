@@ -29,37 +29,38 @@ WIP
 
 
 ## Run Inference
-
+Live background segmentation on your webcam
 ```
 python live_webcam.py
 ```
 
-## Build Model
-- Include instructions of how to build the model
-- This can be done either locally or on the cloud
-```
-# Example
 
-# Step 1
-# Step 2
-```
-
-## Serve Model
-- Include instructions of how to set up a REST or RPC endpoint
-- This is for running remote inference via a custom model
-```
-# Example
-
-# Step 1
-# Step 2
-```
+## Saved Final Models
+|          Optimization                      | Model Graph    |        Model Weights      |
+| ------------------------------------------ |:---------------------:| ----------------|
+| UNet with ResNet-18 backbone (224*224)     |  <add-link>              |        <add-link>      |
+| UNet with ResNet-18 backbone (128*128)                     |  <add-link>              |        <add-link>      |
+| UNet with ResNet-34 backbone (224*224)                     |  <add-link>              |        <add-link>      |
+| UNet with ResNet-34 backbone (128*128)                     |  <add-link>              |        <add-link>      |
+| UNet with EfficientNet EB0 backbone (224*224)                     |  <add-link>             |        <add-link>      |
+| UNet with EfficientNet EB0 backbone (128*128)                     |  <add-link>              |        <add-link>      |
+| UNet with MobileNetV2 backbone (224*224)                     |  <add-link>              |        <add-link>      |
+| UNet with MobileNetV2 backbone (128*128)                     |  <add-link>              |        <add-link>      |
 
 ## Analysis
-- Include some form of EDA (exploratory data analysis)
-- And/or include benchmarking of the model and results
-```
-# Example
+- Quantization
 
-# Step 1
-# Step 2
+```
+#  Weight quantization using TF (fake quantization) results in model compression but not inference speedup.
+```
+
+- Pruning
+
+```
+# Weight Pruning
+  Pruning weights of the NN results in sparse matrices. To get inference speedup from sparse matrices, you need specialized libraries like gemmlowp which can optimize matrix multiplications for sparse matrices
+
+#Filter Pruning
+  For complex model architectures like EfficientNets, it is difficult to rank Filters based on their importance
+
 ```
